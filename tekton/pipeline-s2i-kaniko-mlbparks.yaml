@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: s2i-kaniko-mlbparks-pipeline
+spec:
+  workspaces:
+  - name: source
+  - name: sslcertdir
+  params:
+  tasks:
+  - name: build-and-push-image
+    taskRef:
+      name: s2i-kaniko
+    workspaces:
+    - name: source
+      workspace: source
+    - name: sslcertdir
+      workspace: sslcertdir
+    params:
+    - name: BUILDER_IMAGE                                                                                                                                                                                                   
+      value: "dune.registry.aosc-portal.com:8443/ach/wildfly-centos7:latest"
+    - name: TLSVERIFY
+      value: "true"
+    - name: LOGLEVEL
+      value: "10"
+    - name: IMAGE_NAME
+      value: "dune.registry.aosc-portal.com:8443/ach/mlbparks:latest"
+    - name: IMAGE_SCRIPTS_URL
+      value: "image:///usr/libexec/s2i"
+    - name: PATH_CONTEXT
+      value: "https://git.aosc-portal.com:3443/achelouah/mlbparks.git"
+    - name: KANIKO_BUILDER_IMAGE
+      value: "gcr.io/kaniko-project/executor:latest"
+    - name: IMAGE_SCRIPTS_URL
+      value: "image:///usr/local/s2i"
+    - name: EXTRA_ARGS
+      value: "--verbosity=debug"

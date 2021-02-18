@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: s2i-kaniko-mlbparks-pipelinerun
+spec:
+  serviceAccountName: botsa
+  pipelineRef:
+    name: s2i-kaniko-mlbparks-pipeline
+  workspaces:
+  - name: source
+    persistentVolumeClaim:
+      claimName: mlbparks-source
+  - name: sslcertdir
+    configMap:
+      name: dune-registry-ca
+      defaultMode: 420
+      items:
+      - key: registry-ca.crt
+        path: ca-certificates.crt
