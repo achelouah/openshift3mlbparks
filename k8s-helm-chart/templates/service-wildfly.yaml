@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    description: The web server's http port
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  ports:
+  - port: {{ .Values.wildfly.port }}
+    targetPort: {{ .Values.wildfly.port }}
+    protocol: TCP
+    name: http
+  selector:
+    deployment: {{ .Release.Name }}

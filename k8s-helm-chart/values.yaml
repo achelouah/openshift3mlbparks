@@ -1,0 +1,19 @@
+# Default values for mlbparks.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+wildfly:
+  replicaCount: 1
+  image: "dune.registry.aosc-portal.com:8443/ach/mlbparks:latest"
+  imagePullPolicy: Always
+  port: 8080
+
+mongodb:
+  image: "dune.registry.aosc-portal.com:8443/ach/mongodb-36-centos7:20210209-ae991e7"
+  imagePullPolicy: IfNotPresent
+  port: 27017
+  quiet: true
+
+ingress:
+  enabled: true
+  hostname: mlbparks.apps.k8s.aosc-portal.com

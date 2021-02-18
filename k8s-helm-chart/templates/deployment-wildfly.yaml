@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Release.Name }} 
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.wildfly.replicaCount }}
+  selector:
+    matchLabels:
+      deployment: {{ .Release.Name }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        deployment: {{ .Release.Name }}
+    spec:
+      containers:
+      - image: {{ .Values.wildfly.image }}
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: mongodbUser
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: mongodbPassword
+        - name: MONGODB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: mongodbDatabase
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: mongodbAdminPassword
+        imagePullPolicy: {{ .Values.wildfly.imagePullPolicy }}
+        name: {{ .Release.Name }}
+        ports:
+        - containerPort: {{ .Values.wildfly.port }}
+          name: {{ .Release.Name }}-http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.wildfly.port }}
+          initialDelaySeconds: 30
+          timeoutSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.wildfly.port }}
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        securityContext:
+          capabilities: {}
+          privileged: false
+        resources: {}
